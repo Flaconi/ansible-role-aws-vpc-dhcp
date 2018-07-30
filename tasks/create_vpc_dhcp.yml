@@ -1,0 +1,60 @@
+---
+
+# Assert that required name element is present
+- name: ensure aws_vpc_dhcp_options_sets array contains name key
+  assert:
+    that:
+      - dhcp_options_set.name is defined
+      - dhcp_options_set.name | length > 0
+    msg: "aws_vpc_dhcp_options_sets[x].name is not defined, but required"
+
+# Assert that required vpc_filter element is present
+- name: ensure aws_vpc_dhcp_options_sets array contains vpc_name xor vpc_filter key
+  assert:
+    that:
+      - dhcp_options_set.vpc_filter is defined or dhcp_options_set.vpc_name is defined
+      - not (dhcp_options_set.vpc_filter is defined and dhcp_options_set.vpc_name is defined)
+    msg: "aws_vpc_dhcp_options_sets[x].vpc_filter or .vpc_name is not defined, but required to lookup vpc"
+
+
+# Returns:
+# * aws_vpc_dhcp_vpc_id
+# * aws_vpc_dhcp_vpc_cidr
+- include_tasks: gather_facts_vpc_by_filter.yml
+  when:
+    - dhcp_options_set.vpc_filter is defined
+
+# Returns:
+# * aws_vpc_dhcp_vpc_id
+# * aws_vpc_dhcp_vpc_cidr
+- include_tasks: gather_facts_vpc_by_name.yml
+  when:
+    - dhcp_options_set.vpc_name is defined
+
+
+- name: set DHCP Options Set tags
+  set_fact:
+    _aws_vpc_dhcp_tags: |
+      {{
+        dhcp_options_set.tags | default([]) + [{
+          'key': 'Name',
+          'val': dhcp_options_set.name
+        }]
+      }}
+
+- name: ensure DHCP Options Set is created
+  ec2_vpc_dhcp_option:
+    # Fixed values
+    state: present
+    # Looked-up values
+    vpc_id: "{{ aws_vpc_dhcp_vpc_id }}"
+    # Optional values
+    inherit_existing: "{{ dhcp_options_set.inherit_existing | default(omit) }}"
+    domain_name: "{{ dhcp_options_set.domain_name | default(omit) }}"
+    dns_servers: "{{ dhcp_options_set.dns_servers | default(omit) }}"
+    tags: "{{ _aws_vpc_dhcp_tags | get_attr('key', 'val') }}"
+    region: "{{ dhcp_options_set.region | default(aws_vpc_dhcp_default_region | default(omit)) }}"
+    aws_access_key: "{{ lookup('ENV', 'AWS_ACCESS_KEY') | default(omit) }}"
+    aws_secret_key: "{{ lookup('ENV', 'AWS_SECRET_KEY') | default(omit) }}"
+    security_token: "{{ lookup('ENV', 'AWS_SECURITY_TOKEN') | default(omit) }}"
+    profile: "{{ aws_vpc_dhcp_profile | default(omit) }}"

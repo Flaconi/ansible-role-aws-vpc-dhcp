@@ -1,0 +1,11 @@
+---
+
+###
+### Sane defaults
+###
+
+aws_vpc_dhcp_default_region: eu-central-1
+
+aws_vpc_dhcp_vpc_filter_additional: []
+
+aws_vpc_dhcp_options_sets: []
