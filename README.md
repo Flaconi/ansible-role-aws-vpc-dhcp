@@ -53,7 +53,7 @@ aws_vpc_dhcp_vpc_filter_additional:
   - key: state
     val: available
 
-aws_vpc_dhcp_option_sets:
+aws_vpc_dhcp_options_sets:
   # Create DHCP Options Sets for VPCs by VPC name
   - name: my-dhcp-1
     vpc_name: devops-test-vpc
