@@ -9,6 +9,23 @@ This role is able to create any number of DHCP Options Sets, each attached to a 
 ## Requirements
 
 * Ansible 2.5
+* [botocore](https://pypi.org/project/botocore/)
+* [boto3](https://pypi.org/project/boto3/)
+
+
+## AWS credentials
+
+For handling the resources on AWS, this role supports passing the AWS credentials as environment
+variables.
+
+```bash
+export AWS_ACCESS_KEY=123
+export AWS_SECRET_KEY=456
+export AWS_SECURITY_TOKEN=789
+```
+
+You can read more details about handling these credentials [here][1] or check out the
+[Makefile](./Makefile).
 
 
 ## Additional variables
@@ -104,3 +121,5 @@ make test
 # Run integration tests with custom Ansible version
 make test ANSIBLE_VERSION=2.4
 ```
+
+[1]: https://boto3.readthedocs.io/en/latest/guide/configuration.html

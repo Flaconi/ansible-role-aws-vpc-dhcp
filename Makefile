@@ -17,6 +17,8 @@ test:
 	docker run --rm -it \
 		-v ${PWD}:/etc/ansible/roles/rolename \
 		--workdir /etc/ansible/roles/rolename/tests \
+		-e AWS_ACCESS_KEY \
+		-e AWS_SECRET_KEY \
 		flaconi/ansible:${ANSIBLE_VERSION} ./support/run-tests.sh
 
 lint:
