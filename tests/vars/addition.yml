@@ -1,0 +1,12 @@
+---
+aws_vpc_vpcs:
+  - name: "ansible-vpc-role-test-{{ ansible_date_time.iso8601_basic_short }}"
+    cidr: 172.28.0.0/16
+    region: eu-central-1
+    tags:
+      - key: env
+        val: ci
+      - key: department
+        val: devops
+      - key: owner
+        val: ansible

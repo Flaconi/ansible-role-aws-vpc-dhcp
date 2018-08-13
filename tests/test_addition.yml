@@ -1,0 +1,32 @@
+---
+- name: Running the addition test case
+  hosts: localhost
+  gather_facts: True
+
+  vars_files:
+    - ./vars/addition.yml
+
+  pre_tasks:
+    # Temporary tasks collection, until OPS-2514 is addressed
+    - name: The pip install script should be fetched
+      get_url:
+        url: https://bootstrap.pypa.io/get-pip.py
+        dest: /tmp/get-pip.py
+
+    - name: pip should be installed
+      shell: python /tmp/get-pip.py
+      args:
+        creates: /usr/local/bin/pip
+
+    - name: Prerequisites should be installed
+      pip:
+        name: "{{ item }}"
+        umask: '0022'
+        state: latest
+      loop:
+        - botocore
+        - boto3
+
+  roles:
+    - flaconi.aws-vpc
+    - rolename

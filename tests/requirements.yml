@@ -1,0 +1,3 @@
+---
+- name: 'flaconi.aws-vpc'
+  version: 'v0.1.1'
